@@ -1,0 +1,247 @@
+﻿using System;
+using System.Collections.Generic;
+using System.Data;
+using System.Data.SqlClient;
+using System.Text;
+
+namespace KZYHDotNetTraining.ConsoleApp
+{
+    public class AdoDotNetExample
+    {
+        private readonly string _connectionString = "Data Source=.;Initial Catalog=DotNetTraining;User ID=sa;Password=sasa@123";
+        public void Read()
+        {
+            
+            Console.WriteLine("Connection String: " + _connectionString);
+            SqlConnection connection = new SqlConnection(_connectionString);
+
+            Console.WriteLine("Connection Opening...");
+            connection.Open();
+            Console.WriteLine("Connection Opened.");
+
+            string query = @"SELECT [BlogId]    
+                  ,[BlogTitle]
+                  ,[BlogAuthor]
+                  ,[BlogContent]
+                  ,[DeleteFlag]
+              FROM [dbo].[Tbl_Blog]";
+            SqlCommand cmd = new SqlCommand(query, connection);
+            //SqlDataAdapter adapter = new SqlDataAdapter(cmd);
+            //DataTable dt = new DataTable();
+            //adapter.Fill(dt);
+
+            //dt = adapter.Fill();
+
+            SqlDataReader reader = cmd.ExecuteReader();
+
+            while (reader.Read())
+            {
+                Console.WriteLine(reader["BlogId"]);
+                Console.WriteLine(reader["BlogTitle"]);
+                Console.WriteLine(reader["BlogAuthor"]);
+                Console.WriteLine(reader["BlogContent"]);
+                Console.WriteLine(reader["DeleteFlag"]);
+
+
+            }
+
+
+                //foreach (DataRow dr in dt.Rows)
+                //{
+                //    Console.WriteLine(dr["BlogId"]);
+                //    Console.WriteLine(dr["BlogTitle"]);
+                //    Console.WriteLine(dr["BlogAuthor"]);
+                //    Console.WriteLine(dr["BlogContent"]);
+
+                //}
+
+                Console.WriteLine("Connection Closing...");
+            connection.Close();
+            Console.WriteLine("connection Closed.");
+
+            //DataSet
+            //DataTable
+            //DataRow
+            //DataColumn
+
+            //foreach (DataRow dr in dt.Rows)
+            //{
+            //    Console.WriteLine(dr["BlogId"]);
+            //    Console.WriteLine(dr["BlogTitle"]);
+            //    Console.WriteLine(dr["BlogAuthor"]);
+            //    Console.WriteLine(dr["BlogContent"]);
+
+            //}
+        }
+
+        public void Create()
+        {
+            Console.WriteLine("Blog Title : ");
+            String title = Console.ReadLine();
+
+            Console.WriteLine("Blog Author : ");
+            String author = Console.ReadLine();
+
+            Console.WriteLine("Blog Content : ");
+            String content = Console.ReadLine();
+
+            Console.WriteLine("Connection String: " + _connectionString);
+            SqlConnection connection = new SqlConnection(_connectionString);
+            Console.WriteLine("Connection Opening...");
+            connection.Open();
+            Console.WriteLine("Connection Opened.");
+
+            // ##this one is vulnerable to sql injection
+            //String queryInsert = $@"INSERT INTO [dbo].[Tbl_Blog]
+            //           ([BlogTitle]
+            //           ,[BlogAuthor]
+            //           ,[BlogContent]
+            //           ,[DeleteFlag])
+            //     VALUES
+            //           ('{title}'
+            //           ,'{author}'
+            //           ,'{content}'
+            //           ,0)";
+
+            String queryInsert = $@"INSERT INTO [dbo].[Tbl_Blog]
+           ([BlogTitle]
+           ,[BlogAuthor]
+           ,[BlogContent]
+           ,[DeleteFlag])
+     VALUES
+           (@BlogTitle
+           ,@BlogAuthor
+           ,@BlogContent
+           ,0)";
+
+            SqlCommand cmd = new SqlCommand(queryInsert, connection);
+            cmd.Parameters.AddWithValue("@BlogTitle", title);
+            cmd.Parameters.AddWithValue("@BlogAuthor", author);
+            cmd.Parameters.AddWithValue("@BlogContent", content);
+
+            //SqlDataAdapter adaptor1 = new SqlDataAdapter(cmd1);
+            //DataTable dt1 = new DataTable();
+            //adaptor1.Fill(dt1);
+
+            int result = cmd.ExecuteNonQuery();
+
+            Console.WriteLine("Connection1 Closing...");
+            connection.Close();
+            Console.WriteLine("Connection1 Closed");
+
+            //if (result == 1)
+            //{
+            //    Console.WriteLine("Saving Successful.");
+            //}
+            //else
+            //{
+            //    Console.WriteLine("Saving Failed.");
+            //}
+
+            Console.WriteLine(result == 1 ? "Saving Successful." : "Saving Failed.");
+        }
+        
+        public void Edit()
+        {
+            Console.WriteLine("Enter Id");
+            string id = Console.ReadLine();
+
+            SqlConnection connection = new SqlConnection(_connectionString);
+            connection.Open();
+            string query = @"SELECT [BlogId]
+                          ,[BlogTitle]
+                          ,[BlogAuthor]
+                          ,[BlogContent]
+                          ,[DeleteFlag]
+                      FROM [dbo].[Tbl_Blog] where [BlogId]=@BlogId";
+            SqlCommand cmd = new SqlCommand(query, connection);
+            cmd.Parameters.AddWithValue("@BlogId", id);
+            SqlDataAdapter adaptor = new SqlDataAdapter(cmd);
+            DataTable dt = new DataTable();
+            adaptor.Fill(dt);
+
+            connection.Close();
+
+            if(dt.Rows.Count == 0)
+            {
+                Console.WriteLine("No Data Found");
+                return;
+            }
+
+            DataRow dr = dt.Rows[0];
+            Console.WriteLine("Blog Id: "+ dr["BlogId"]);
+            Console.WriteLine("BlogTitle: " + dr["BlogTitle"]);
+            Console.WriteLine("BlogAuthor: " + dr["BlogAuthor"]);
+            Console.WriteLine("BlogContent: " + dr["BlogContent"]);
+
+        }
+        public void Update()
+        {
+            Console.WriteLine("Blog Id : ");
+            String id = Console.ReadLine();
+
+            Console.WriteLine("Blog Title : ");
+            String title = Console.ReadLine();
+
+            Console.WriteLine("Blog Author : ");
+            String author = Console.ReadLine();
+
+            Console.WriteLine("Blog Content : ");
+            String content = Console.ReadLine();
+
+            Console.WriteLine("Connection String: " + _connectionString);
+            SqlConnection connection = new SqlConnection(_connectionString);
+            Console.WriteLine("Connection Opening...");
+            connection.Open();
+            Console.WriteLine("Connection Opened.");
+
+            String queryInsert = $@"UPDATE [dbo].[Tbl_Blog]
+                               SET [BlogTitle] = @BlogTitle
+                                  ,[BlogAuthor] = @BlogAuthor
+                                  ,[BlogContent] = @BlogContent
+                                  ,[DeleteFlag] = 0
+                             WHERE BlogId=@BlogId";
+
+            SqlCommand cmd = new SqlCommand(queryInsert, connection);
+            cmd.Parameters.AddWithValue("@BlogId", id);
+            cmd.Parameters.AddWithValue("@BlogTitle", title);
+            cmd.Parameters.AddWithValue("@BlogAuthor", author);
+            cmd.Parameters.AddWithValue("@BlogContent", content);
+
+            int result = cmd.ExecuteNonQuery();
+
+            Console.WriteLine("Connection1 Closing...");
+            connection.Close();
+            Console.WriteLine("Connection1 Closed");
+
+            Console.WriteLine(result == 1 ? "Updating Successful." : "Updating Failed.");
+        }
+
+        public void Delete()
+        {
+            Console.WriteLine("Blog Id : ");
+            String id = Console.ReadLine();
+
+            Console.WriteLine("Connection String: " + _connectionString);
+            SqlConnection connection = new SqlConnection(_connectionString);
+            Console.WriteLine("Connection Opening...");
+            connection.Open();
+            Console.WriteLine("Connection Opened.");
+
+            String queryInsert = $@"DELETE FROM [dbo].[Tbl_Blog]
+                                WHERE BlogId=@BlogId";
+
+            SqlCommand cmd = new SqlCommand(queryInsert, connection);
+            cmd.Parameters.AddWithValue("@BlogId", id);
+
+
+            int result = cmd.ExecuteNonQuery();
+
+            Console.WriteLine("Connection1 Closing...");
+            connection.Close();
+            Console.WriteLine("Connection1 Closed");
+
+            Console.WriteLine(result == 1 ? "Deleting Successful." : "Deleting Failed.");
+        }
+    }
+}
