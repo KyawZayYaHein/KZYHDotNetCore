@@ -228,8 +228,9 @@ namespace KZYHDotNetTraining.ConsoleApp
             connection.Open();
             Console.WriteLine("Connection Opened.");
 
-            String queryInsert = $@"DELETE FROM [dbo].[Tbl_Blog]
-                                WHERE BlogId=@BlogId";
+            String queryInsert = $@"UPDATE [dbo].[Tbl_Blog]
+                               SET [DeleteFlag] = 1
+                             WHERE BlogId=@BlogId";
 
             SqlCommand cmd = new SqlCommand(queryInsert, connection);
             cmd.Parameters.AddWithValue("@BlogId", id);
