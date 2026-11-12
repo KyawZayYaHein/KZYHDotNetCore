@@ -26,6 +26,12 @@ AdoDotNetExample adoDotNetExample=new AdoDotNetExample();
 
 DapperExample dapperExample= new DapperExample();
 //dapperExample.Read();
-dapperExample.Create("asdas","dasaw","asdwfkws");
+//dapperExample.Create("asdas","dasaw","asdwfkws");
+//dapperExample.Edit(1);
+//dapperExample.Edit(2);
+//dapperExample.Update(1, "Hello", "Hi", "asdwfkws");
+dapperExample.Delete(3);
+
+
 
 
