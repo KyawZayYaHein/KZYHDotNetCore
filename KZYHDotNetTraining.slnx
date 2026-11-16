@@ -3,4 +3,6 @@
     <File Path="README.md" />
   </Folder>
   <Project Path="KZYHDotNetTraining.ConsoleApp/KZYHDotNetTraining.ConsoleApp.csproj" />
+  <Project Path="KZYHDotNetTraining.ConsoleApp2/KZYHDotNetTraining.ConsoleApp2.csproj" Id="20b65b69-068e-433c-8693-50fab9ec4b9e" />
+  <Project Path="KZYHDotNetTraining.Database/KZYHDotNetTraining.Database.csproj" Id="befa8a36-4e63-485c-a3b0-cd5b717bfc40" />
 </Solution>
